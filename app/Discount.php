@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Discount extends Model
 {
-    const FIXED_PRODUCT_DISCOUNT = 1;
-    const PERCENT_PRODUCT_DISCOUNT = 2;
-    const PRODUCT_FOR_FREE = 3;
+    const FIXED_PRODUCT_DISCOUNT    = 1;
+    const PERCENT_PRODUCT_DISCOUNT  = 2;
+    const PRODUCT_FOR_FREE          = 3;
     const QUANTITY_PRODUCT_DISCOUNT = 4;
 
     /**
@@ -25,7 +25,9 @@ class Discount extends Model
      *
      * @var array
      */
-    protected $dates = ['start_at', 'end_at'];
+    protected $dates = [
+        'start_at', 'end_at'
+    ];
 
     /**
      * Get the product that the discount is applied to.

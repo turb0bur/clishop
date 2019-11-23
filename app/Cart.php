@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Order extends Model
+class Cart extends Model
 {
     /**
      * The attributes that are mass assignable.
@@ -12,7 +12,7 @@ class Order extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'total', 'credit_card', 'payment', 'delivery', 'order'
+        'order'
     ];
 
     /**
@@ -23,12 +23,4 @@ class Order extends Model
     protected $casts = [
         'order' => 'array'
     ];
-
-    /**
-     * Get the user that made the order.
-     */
-    public function user()
-    {
-        return $this->belongsTo('App\User');
-    }
 }
