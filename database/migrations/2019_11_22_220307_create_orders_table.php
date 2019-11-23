@@ -14,7 +14,7 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->unsignedInteger('id');
+            $table->integerIncrements('id');
             $table->unsignedInteger('user_id');
             $table->float('total');
             $table->string('credit_card')->nullable();

@@ -14,12 +14,14 @@ class CreateDiscountsTable extends Migration
     public function up()
     {
         Schema::create('discounts', function (Blueprint $table) {
-            $table->unsignedInteger('id');
+            $table->integerIncrements('id');
             $table->unsignedInteger('product_id');
             $table->unsignedTinyInteger('type');
             $table->unsignedTinyInteger('value');
-            $table->timestamp('start_at');
-            $table->timestamp('end_at');
+            $table->unsignedInteger('present_id')->nullable();
+            $table->timestamp('start_at')->nullable();
+            $table->timestamp('end_at')->nullable();
+            $table->timestamps();
         });
     }
 

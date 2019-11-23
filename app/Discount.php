@@ -17,7 +17,7 @@ class Discount extends Model
      * @var array
      */
     protected $fillable = [
-        'product_id', 'type', 'value', 'start_at', 'end_at',
+        'product_id', 'type', 'value', 'present_id', 'start_at', 'end_at',
     ];
 
     /**
