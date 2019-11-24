@@ -17,7 +17,7 @@ class CartAddCommand extends Command
      */
     protected $signature = 'cart:add 
                             {product : The SKU of the product}
-                            {--cid= : Use retrieved cart ID in order to continue your shopping}
+                            {--C|cid= : Use retrieved cart ID in order to continue your shopping}
                             {--Q|quantity=1 : The amount of the chosen product}';
 
     /**
@@ -25,7 +25,7 @@ class CartAddCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Adding product to a new or an existed cart';
+    protected $description = 'Add product to a new or an existed cart';
 
     /**
      * Create a new command instance.
@@ -80,7 +80,7 @@ class CartAddCommand extends Command
             $cart       = Cart::findOrFail($cart_id);
             $cart_order = json_decode($cart->order, true);
             foreach ($cart_order as $key => $item) {
-                if (in_array($product_sku, $item)) {
+                if ($item['sku'] == $product_sku) {
                     $cart_order[$key]['quantity'] += $quantity;
                     $cart_order[$key]['subtotal'] = $product->price * $cart_order[$key]['quantity'];
                 } else {
