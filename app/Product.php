@@ -22,4 +22,24 @@ class Product extends Model
     {
         return $this->hasMany('App\Discount');
     }
+
+    /**
+     * Check whether enough amount for the product in the stock
+     *
+     * @param string  $product_sku
+     * @param integer $quantity
+     * @return Product|boolean
+     */
+    public static function reserveIfAvailable($product_sku, $quantity = 1)
+    {
+        $product = Product::where('sku', strtolower($product_sku))->first();
+        if ($product->quantity > $quantity) {
+            $product->quantity -= $quantity;
+            $product->booked   = $quantity;
+
+            return $product->save() ? $product : false;
+        } else {
+            return false;
+        }
+    }
 }

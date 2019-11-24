@@ -17,6 +17,7 @@ class CreateCartsTable extends Migration
             $table->integerIncrements('id');
             $table->string('order');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
