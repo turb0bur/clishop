@@ -20,7 +20,7 @@ class CreateOrdersTable extends Migration
             $table->string('credit_card')->nullable();
             $table->unsignedTinyInteger('payment');
             $table->unsignedTinyInteger('delivery');
-            $table->string('order');
+            $table->text('order');
             $table->timestamp('created_at');
         });
     }

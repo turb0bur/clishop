@@ -15,7 +15,7 @@ class CreateCartsTable extends Migration
     {
         Schema::create('carts', function (Blueprint $table) {
             $table->integerIncrements('id');
-            $table->string('order');
+            $table->text('order');
             $table->timestamps();
             $table->softDeletes();
         });
