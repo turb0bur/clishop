@@ -67,10 +67,10 @@ class CartCheckoutCommand extends Command
         $headers = ['SKU', 'Name', 'Quantity', 'Subtotal', 'Present', 'Notes'];
         $this->table($headers, $cart->order);
         $this->info("Your total is \${$total}");
-        $choice = $this->choice('Would you like to proceed with the payment process(p), cancel your order(c) or come back to the shop(b)? (p/c/b)?', ['p', 'c', 'b']);
+        $choice = $this->choice('Would you like to proceed with the payment process(1), cancel your order(2) or come back to the shop(3)? ', ['pay', 'cancel', 'back']);
 
         switch ($choice):
-            case 'p':
+            case 'pay':
                 $card_number = $this->ask('Type your credit card number, please (12 digits)');
 //                $exp_date    = $this->ask('Type your credit card expiration date, please (mm/yy)');
 //                $cvv         = $this->secret('Type your credit card CVV2 code (3 digits)');
@@ -129,12 +129,12 @@ class CartCheckoutCommand extends Command
                 }
 
                 return true;
-            case 'c':
+            case 'cancel':
                 if ($this->confirm('Are you sure you want to delete your order?')) {
                     $cart->delete();
                 }
                 break;
-            case 'b':
+            case 'back':
             default:
                 return;
         endswitch;
