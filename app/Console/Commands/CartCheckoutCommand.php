@@ -64,7 +64,7 @@ class CartCheckoutCommand extends Command
         $cart  = Cart::findOrFail($cart_id);
         $total = $cart->total;
 
-        $headers = ['Name', 'Quantity', 'Subtotal'];
+        $headers = ['SKU','Name', 'Quantity', 'Subtotal', 'Notes'];
         $this->table($headers, $cart->order);
         $this->info("Your total is \${$total}");
         $choice = $this->choice('Would you like to proceed with the payment process(p), cancel your order(c) or come back to the shop(b)? (p/c/b)?', ['p', 'c', 'b']);
@@ -131,7 +131,7 @@ class CartCheckoutCommand extends Command
                 return true;
             case 'c':
                 if ($this->confirm('Are you sure you want to delete your order?')) {
-                    $cart->forceDelete();
+                    $cart->delete();
                 }
                 break;
             case 'b':
