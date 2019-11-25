@@ -30,7 +30,7 @@ class Cart extends Model
     /**
      * Decode the cart order.
      *
-     * @param  string $value
+     * @param string $value
      * @return array
      */
     public function getOrderAttribute($value)

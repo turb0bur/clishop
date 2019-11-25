@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Cart;
+use App\Http\Controllers\CartController;
 use App\Product;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
@@ -77,20 +78,20 @@ class CartRemoveCommand extends Command
         $product    = Product::where(['sku' => $product_sku])->first();
         $cart_order = $cart->order;
         foreach ($cart_order as $key => $item) {
-            if ($item['sku'] == $product_sku) {
+            if ($item['sku'] == $product_sku && $item['present'] !== 'Yes') {
                 if ($quantity > 0 && $quantity < $item['quantity']) {
                     $cart_order[$key]['quantity'] -= $quantity;
-                    $cart_order[$key]['subtotal'] = $product->price * $cart_order[$key]['quantity'];
-                } elseif ($quantity == 0) {
+                    $cart_order[$key]['subtotal'] = round($product->price * $cart_order[$key]['quantity'], 2);
+                } elseif ($quantity == 0 || $quantity == $item['quantity']) {
                     unset($cart_order[$key]);
                     break;
                 }
             }
         }
         $cart->update(['order' => $cart_order]);
+        $cart_operations = new CartController($cart->id);
+        $cart_operations->applyDiscounts();
         Product::removeReservation($product_sku, $quantity);
-        $this->info("Your cart (cid={$cart->id}) has been successfully updated.");
-        $headers = ['SKU', 'Quantity', 'Subtotal'];
-        $this->table($headers, $cart_order);
+        $this->info("You have successfully removed $quantity {$product->name} from your cart (cid={$cart->id}).");
     }
 }

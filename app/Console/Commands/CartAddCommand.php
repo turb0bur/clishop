@@ -70,32 +70,43 @@ class CartAddCommand extends Command
 
         if (!$product = Product::reserveIfAvailable($product_sku, $quantity)) {
             $this->error('There are not enough product in the stock.');
+
+            return;
         }
         $order = [
             'sku'      => $product_sku,
             'name'     => $product->name,
             'quantity' => $quantity,
             'subtotal' => $product->price * $quantity,
+            'present'  => 'No',
+            'notes'    => '',
         ];
         if ($cart_id) {
-            $cart       = Cart::findOrFail($cart_id);
-            $cart_order = $cart->order;
+            $cart            = Cart::findOrFail($cart_id);
+            $cart_order      = $cart->order;
             if (!empty($cart_order)) {
+                $in_cart = false;
                 foreach ($cart_order as $key => $item) {
-                    if ($item['sku'] == $product_sku) {
+                    if ($item['sku'] == $product_sku && $item['present'] !== 'Yes') {
                         $cart_order[$key]['quantity'] += $quantity;
-                        $cart_order[$key]['subtotal'] = $product->price * $cart_order[$key]['quantity'];
-                    } else {
-                        $cart_order[] = $order;
+                        $cart_order[$key]['subtotal'] = round($product->price * $quantity, 2);
+
+                        $in_cart = true;
                     }
                 }
+                if (!$in_cart) {
+                    $cart_order[] = $order;
+                }
                 $cart->update(['order' => $cart_order]);
-                $this->info("Your cart (cid={$cart->id}) has been successfully updated.");
+                $cart_operations = new CartController($cart_id);
+                $cart_operations->applyDiscounts();
+                $this->info("You have successfully added $quantity {$product->name} to your cart (cid={$cart->id}).");
             }
-            $headers = ['SKU', 'Name', 'Quantity', 'Subtotal'];
-            $this->table($headers, $cart_order);
         } else {
             $cart = Cart::create(['order' => [$order]]);
+
+            $cart_operations = new CartController($cart->id);
+            $cart_operations->applyDiscounts();
             $this->info("The product has been successfully added. Your cart ID is {$cart->id}. Use it in case you want to proceed with the purchase order");
         }
     }
