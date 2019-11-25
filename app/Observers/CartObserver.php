@@ -22,6 +22,10 @@ class CartObserver
                 if ($cart->isForceDeleting()) {
                     $product->booked -= $item['quantity'];
                     $product->update(['booked']);
+                } else {
+                    $product->booked -= $item['quantity'];
+                    $product->quantity += $item['quantity'];
+                    $product->update(['booked', 'quantity']);
                 }
             }
         }
