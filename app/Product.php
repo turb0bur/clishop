@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
@@ -16,11 +17,13 @@ class Product extends Model
     ];
 
     /**
-     * Get the discounts for the product.
+     * Get the discount for the product.
      */
-    public function discounts()
+    public function discount()
     {
-        return $this->hasMany('App\Discount');
+        return $this->hasOne('App\Discount')
+            ->whereDate('start_at', '<', Carbon::today())
+            ->whereDate('end_at', '>', Carbon::today());
     }
 
     /**
@@ -33,7 +36,7 @@ class Product extends Model
     public static function reserveIfAvailable($product_sku, $quantity = 1)
     {
         $product = Product::where('sku', strtolower($product_sku))->first();
-        if ($product->quantity > $quantity) {
+        if ($product->quantity >= $quantity) {
             $product->quantity -= $quantity;
             $product->booked   += $quantity;
 
