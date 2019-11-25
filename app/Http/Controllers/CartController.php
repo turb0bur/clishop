@@ -70,7 +70,7 @@ class CartController extends Controller
                             'present'  => 'Yes',
                             'notes'    => "Having bought {$item['quantity']} {$item['name']} you got $present_quantity {$present->name} for free"
                         ];
-                        if (Product::reserveIfAvailable($present->sku, $present_quantity)) {
+                        if (ProductController::reserveIfAvailable($present->sku, $present_quantity)) {
                             $cart_order[] = $present_order;
                             $this->cart->update(['order' => $cart_order]);
                         }
@@ -90,7 +90,7 @@ class CartController extends Controller
         if (!empty($cart_order = &$this->order)) {
             foreach ($cart_order as $key => $item) {
                 if ($item['present'] === 'Yes') {
-                    if (Product::removeReservation($item['sku'], $item['quantity'])) {
+                    if (ProductController::removeReservation($item['sku'], $item['quantity'])) {
                         unset($cart_order[$key]);
                     }
                 }

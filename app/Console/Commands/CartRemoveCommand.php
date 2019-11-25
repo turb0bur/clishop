@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Cart;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ProductController;
 use App\Product;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
@@ -91,7 +92,7 @@ class CartRemoveCommand extends Command
         $cart->update(['order' => $cart_order]);
         $cart_operations = new CartController($cart->id);
         $cart_operations->applyDiscounts();
-        Product::removeReservation($product_sku, $quantity);
+        ProductController::removeReservation($product_sku, $quantity);
         $this->info("You have successfully removed $quantity {$product->name} from your cart (cid={$cart->id}).");
     }
 }

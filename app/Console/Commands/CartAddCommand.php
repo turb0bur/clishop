@@ -4,7 +4,7 @@ namespace App\Console\Commands;
 
 use App\Cart;
 use App\Http\Controllers\CartController;
-use App\Product;
+use App\Http\Controllers\ProductController;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Validator;
 
@@ -68,7 +68,7 @@ class CartAddCommand extends Command
             return;
         }
 
-        if (!$product = Product::reserveIfAvailable($product_sku, $quantity)) {
+        if (!$product = ProductController::reserveIfAvailable($product_sku, $quantity)) {
             $this->error('There are not enough product in the stock.');
 
             return;
