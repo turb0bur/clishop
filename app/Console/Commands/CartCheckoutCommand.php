@@ -17,7 +17,7 @@ class CartCheckoutCommand extends Command
      * @var string
      */
     protected $signature = 'cart:checkout
-                            {cid : ID of the cart}';
+                            {--C|cid= : ID of the cart}';
 
     /**
      * The console command description.
@@ -43,7 +43,7 @@ class CartCheckoutCommand extends Command
      */
     public function handle()
     {
-        $cart_id = $this->argument('cid');
+        $cart_id = $this->option('cid');
 
         $validator = Validator::make([
             'cart_id' => $cart_id,
@@ -64,7 +64,7 @@ class CartCheckoutCommand extends Command
         $cart  = Cart::findOrFail($cart_id);
         $total = $cart->total;
 
-        $headers = ['SKU','Name', 'Quantity', 'Subtotal', 'Notes'];
+        $headers = ['SKU', 'Name', 'Quantity', 'Subtotal', 'Present', 'Notes'];
         $this->table($headers, $cart->order);
         $this->info("Your total is \${$total}");
         $choice = $this->choice('Would you like to proceed with the payment process(p), cancel your order(c) or come back to the shop(b)? (p/c/b)?', ['p', 'c', 'b']);
@@ -125,7 +125,7 @@ class CartCheckoutCommand extends Command
                 if ($order) {
                     $cart->forceDelete();
                     $this->info('You have successfully placed your order. Please check your email to see more details');
-                    $this-> call('products:all');
+                    $this->call('products:all');
                 }
 
                 return true;
