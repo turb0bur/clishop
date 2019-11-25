@@ -17,7 +17,7 @@ class CartRemoveCommand extends Command
     protected $signature = 'cart:remove
                             {product : The SKU of the product}
                             {--C|cid= : Use retrieved cart ID in order to continue your shopping}
-                            {--Q|quantity : The amount of the product that will be removed from the cart. The whole number will be removed if quantity missed }';
+                            {--Q|quantity= : The amount of the product that will be removed from the cart. The whole number will be removed if quantity missed }';
 
     /**
      * The console command description.
@@ -75,7 +75,7 @@ class CartRemoveCommand extends Command
         }
 
         $product    = Product::where(['sku' => $product_sku])->first();
-        $cart_order = json_decode($cart->order, true);
+        $cart_order = $cart->order;
         foreach ($cart_order as $key => $item) {
             if ($item['sku'] == $product_sku) {
                 if ($quantity > 0 && $quantity < $item['quantity']) {
@@ -85,13 +85,9 @@ class CartRemoveCommand extends Command
                     unset($cart_order[$key]);
                     break;
                 }
-            } else {
-                $this->error("Product with provided SKU {$product_sku} has not been found in your cart");
-
-                return;
             }
         }
-        $cart->update(['order' => json_encode($cart_order)]);
+        $cart->update(['order' => $cart_order]);
         Product::removeReservation($product_sku, $quantity);
         $this->info("Your cart (cid={$cart->id}) has been successfully updated.");
         $headers = ['SKU', 'Quantity', 'Subtotal'];

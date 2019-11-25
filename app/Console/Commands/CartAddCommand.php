@@ -73,26 +73,29 @@ class CartAddCommand extends Command
         }
         $order = [
             'sku'      => $product_sku,
+            'name'     => $product->name,
             'quantity' => $quantity,
             'subtotal' => $product->price * $quantity,
         ];
         if ($cart_id) {
             $cart       = Cart::findOrFail($cart_id);
-            $cart_order = json_decode($cart->order, true);
-            foreach ($cart_order as $key => $item) {
-                if ($item['sku'] == $product_sku) {
-                    $cart_order[$key]['quantity'] += $quantity;
-                    $cart_order[$key]['subtotal'] = $product->price * $cart_order[$key]['quantity'];
-                } else {
-                    $cart_order[] = $order;
+            $cart_order = $cart->order;
+            if (!empty($cart_order)) {
+                foreach ($cart_order as $key => $item) {
+                    if ($item['sku'] == $product_sku) {
+                        $cart_order[$key]['quantity'] += $quantity;
+                        $cart_order[$key]['subtotal'] = $product->price * $cart_order[$key]['quantity'];
+                    } else {
+                        $cart_order[] = $order;
+                    }
                 }
+                $cart->update(['order' => $cart_order]);
+                $this->info("Your cart (cid={$cart->id}) has been successfully updated.");
             }
-            $cart->update(['order' => json_encode($cart_order)]);
-            $this->info("Your cart (cid={$cart->id}) has been successfully updated.");
-            $headers = ['SKU', 'Quantity', 'Subtotal'];
+            $headers = ['SKU', 'Name', 'Quantity', 'Subtotal'];
             $this->table($headers, $cart_order);
         } else {
-            $cart = Cart::create(['order' => json_encode([$order])]);
+            $cart = Cart::create(['order' => [$order]]);
             $this->info("The product has been successfully added. Your cart ID is {$cart->id}. Use it in case you want to proceed with the purchase order");
         }
     }

@@ -43,7 +43,6 @@ class Product extends Model
         }
     }
 
-
     /**
      * Make products available for purchase after removing from a cart
      *
@@ -53,7 +52,7 @@ class Product extends Model
      */
     public static function removeReservation($product_sku, $quantity)
     {
-        $product = Product::where('sku', strtolower($product_sku))->first();
+        $product = Product::where('sku', $product_sku)->first();
 
         $product->booked   -= $quantity;
         $product->quantity += $quantity;
