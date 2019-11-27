@@ -33,8 +33,8 @@ class DiscountSeeder extends Seeder
             ],
             [
                 'product_id' => Product::where('name', 'Google Home')->first()->id,
-                'type'       => Discount::PRODUCT_FOR_FREE,
-                'value'      => 2,
+                'type'       => Discount::QUANTITY_PRODUCT_DISCOUNT,
+                'value'      => 3,
                 'present_id' => Product::where('name', 'Google Home')->first()->id,
                 'start_at'   => Carbon::yesterday(),
                 'end_at'     => Carbon::now()->addMonth(),

@@ -81,6 +81,20 @@ class CartController extends Controller
                             $this->cart->update(['order' => $cart_order]);
                         }
                         break;
+                    case Discount::QUANTITY_PRODUCT_DISCOUNT:
+                        $free_quantity                = intdiv($item['quantity'], $discount->value);
+                        $cart_order[$key]['quantity'] -= $free_quantity;
+                        $cart_order[$key]['subtotal'] = $cart_order[$key]['quantity'] * $product->price;
+                        $free_order                   = [
+                            'sku'      => $item['sku'],
+                            'name'     => $item['name'],
+                            'quantity' => $free_quantity,
+                            'subtotal' => 0,
+                            'present'  => 'Yes',
+                            'notes'    => "Having bought {$item['quantity']} {$item['name']} you got $free_quantity for free"
+                        ];
+                        $cart_order[] = $free_order;
+                        $this->cart->update(['order' => $cart_order]);
                 endswitch;
             }
         }
