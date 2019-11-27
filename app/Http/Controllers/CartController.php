@@ -60,9 +60,9 @@ class CartController extends Controller
                         }
                         break;
                     case Discount::PRODUCT_FOR_FREE:
-                        $present_quantity = intdiv($item['quantity'], $discount->value);
-                        $present          = Product::findOrFail($discount->present_id);
-                        $present_order    = [
+                        $present_quantity  = intdiv($item['quantity'], $discount->value);
+                        $present           = Product::findOrFail($discount->present_id);
+                        $present_order     = [
                             'sku'      => $present->sku,
                             'name'     => $present->name,
                             'quantity' => $present_quantity,
@@ -70,7 +70,13 @@ class CartController extends Controller
                             'present'  => 'Yes',
                             'notes'    => "Having bought {$item['quantity']} {$item['name']} you got $present_quantity {$present->name} for free"
                         ];
-                        if (ProductController::reserveIfAvailable($present->sku, $present_quantity)) {
+                        $reserved_quantity = ProductController::reserveIfAvailable($present->sku, $present_quantity);
+                        if ($reserved_quantity <= $present_quantity) {
+                            if ($reserved_quantity < $present_quantity) {
+                                $present_order['quantity'] = $reserved_quantity;
+                                $present_order['notes']    = "Having bought {$item['quantity']} {$item['name']} you got $present_quantity {$present->name} for free,
+                             but only $reserved_quantity {$present->name} left in stock.";
+                            }
                             $cart_order[] = $present_order;
                             $this->cart->update(['order' => $cart_order]);
                         }

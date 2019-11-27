@@ -20,7 +20,13 @@ class ProductController extends Controller
             $product->quantity -= $quantity;
             $product->booked   += $quantity;
 
-            return $product->save() ? $product : false;
+            return $product->save() ? $product->booked : false;
+        } elseif ($product->quantity < $quantity && $product->quantity > 0) {
+            $product->booked   += $product->quantity;
+            $product_reserved  = $product->quantity;
+            $product->quantity = 0;
+
+            return $product->save() ? $product_reserved : false;
         } else {
             return false;
         }
